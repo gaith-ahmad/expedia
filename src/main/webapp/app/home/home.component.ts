@@ -6,12 +6,15 @@ import { takeUntil } from 'rxjs/operators';
 import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
+import { ExpediaOffersService } from './service/expedia-offers.service';
+import { FormsModule } from '@angular/forms';
+import { Root } from './DTO/dto';
 
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [SharedModule, RouterModule],
+  imports: [SharedModule, RouterModule,FormsModule],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
@@ -20,20 +23,34 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
+  
 
+  constructor(private expediaService:ExpediaOffersService){
+
+  }
+  originCities: string[] = [];
+  selectedOriginCity: string = '';
+
+ 
+  destinationCities: string[] = [];
+  selectedDestinationCity: string ='';
+
+
+  package!:Root
+
+  
   ngOnInit(): void {
-    this.accountService
-      .getAuthenticationState()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(account => this.account.set(account));
+  this.expediaService.getOriginCities().subscribe(data=>this.originCities=data);
+  this.expediaService.getDestinationCities().subscribe(data=>this.destinationCities=data);
   }
 
-  login(): void {
-    this.router.navigate(['/login']);
+  search():void {
+    this.expediaService.getPackage(this.selectedOriginCity,this.selectedDestinationCity).subscribe(data=>
+      this.package=data
+    );
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    
   }
 }

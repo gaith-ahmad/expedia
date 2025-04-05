@@ -227,6 +227,10 @@
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
         </dependency>
+         <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -608,6 +612,7 @@
                     <configuration>
                         <installDirectory>target</installDirectory>
                         <nodeVersion>${node.version}</nodeVersion>
+                        <arguments>install --legacy-peer-deps</arguments>
                         <npmVersion>${npm.version}</npmVersion>
                     </configuration>
                 </plugin>
